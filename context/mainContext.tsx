@@ -8,18 +8,25 @@ import {
 
 type mainStateType = {
   availableItems: Set<string>;
+  allItems: string[];
 };
 const initialState: mainStateType = {
-  availableItems: new Set<string>(),
+  availableItems: new Set(),
+  allItems: [],
 };
 
 type mainActionType =
   | {
-      type: "LOAD_AVAILABLE_ITEMS";
+      type: "INITIAL_LOAD";
+      payload: {
+        itemsList: string[];
+      };
     }
   | {
       type: "ADD_ITEM";
-      payload: string;
+      payload: {
+        item: string;
+      };
     };
 const MainContext = createContext<{
   state: mainStateType;
@@ -35,7 +42,25 @@ export const MainContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [state, dispatch] = useReducer(MainReducer, initialState);
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const controller = new AbortController();
+    async function loadItems() {
+      const res = await fetch("/items-list.json", {
+        signal: controller.signal,
+      });
+      const data = await res.json();
+      dispatch({
+        type: "INITIAL_LOAD",
+        payload: {
+          itemsList: data,
+        },
+      });
+    }
+    loadItems();
+    return () => {
+      controller.abort();
+    };
+  }, []);
   return (
     <MainContext.Provider
       value={{
@@ -49,13 +74,30 @@ export const MainContextProvider = ({
 };
 
 function MainReducer(state: mainStateType, action: mainActionType) {
-  switch (action.type) {
-    case "LOAD_AVAILABLE_ITEMS":
-      return { ...state };
+  if (process.env.NODE_ENV === "development")
+    console.log("[MAIN]", { state, action });
+  const newState = { ...state };
+  const { type, payload } = action;
+  switch (type) {
+    case "INITIAL_LOAD":
+      // Loading items list
+      newState.allItems = payload.itemsList;
+      // laod available items from localstorage
+      const availableItems = localStorage.getItem("availableItems");
+      if (availableItems) {
+        newState.availableItems = new Set(JSON.parse(availableItems));
+      }
+      return newState;
     case "ADD_ITEM":
-      return state;
+      newState.availableItems = new Set(newState.availableItems);
+      newState.availableItems.add(payload.item);
+      localStorage.setItem(
+        "availableItems",
+        JSON.stringify(Array.from(newState.availableItems))
+      );
+      return newState;
     default:
-      return state;
+      return newState;
   }
 }
 

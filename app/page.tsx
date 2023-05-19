@@ -2,18 +2,21 @@
 import useMainContext, { MainContextProvider } from "@/context/mainContext";
 
 export default function Home() {
-  const { state } = useMainContext();
   return (
     <MainContextProvider>
       <main className="">
         <Navbar />
-        <p>{Array.from(state.availableItems).join(", ")}</p>
+        <Text />
       </main>
     </MainContextProvider>
   );
 }
 
 function Navbar() {
+  const {
+    state: { allItems, availableItems },
+    dispatch,
+  } = useMainContext();
   return (
     <div className="navbar bg-base-100">
       <div className="flex-1">
@@ -28,18 +31,41 @@ function Navbar() {
           className="input-bordered input"
           id="available-item"
           list="available-items"
+          autoComplete="off"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              const val = e.currentTarget.value;
+              if (allItems.includes(val) && !availableItems.has(val)) {
+                dispatch({
+                  type: "ADD_ITEM",
+                  payload: {
+                    item: e.currentTarget.value,
+                  },
+                });
+                e.currentTarget.value = "";
+              }
+            }
+          }}
         />
         <datalist id="available-items">
-          <option value="Fire" />
-          <option value="Water" />
-          <option value="Earth" />
-          <option value="Air" />
-          <option value="Pressure" />
-          <option value="Energy" />
-          <option value="Dust" />
-          <option value="Lava" />
+          {allItems
+            .filter((e) => !availableItems.has(e))
+            .map((item) => (
+              <option key={item} value={item} />
+            ))}
         </datalist>
       </div>
+    </div>
+  );
+}
+
+function Text() {
+  const { availableItems } = useMainContext().state;
+  return (
+    <div>
+      <p>{availableItems.size}</p>
+      <p>{Array.from(availableItems).join(", ")}</p>
     </div>
   );
 }
