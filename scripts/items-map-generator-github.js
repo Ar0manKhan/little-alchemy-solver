@@ -1,3 +1,7 @@
+// NOTE: This script is not used anymore. It was used to generate the items-map.json
+// file from the github gist but it was not up to date and it had alot of missing 
+// combinations 
+
 // This will convert the items from the file with the format of 
 // { "item1 + item2: product" } to {product: [item1, item2]} and then store 
 // that in a file items.json
