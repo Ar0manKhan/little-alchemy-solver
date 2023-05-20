@@ -27,6 +27,10 @@ type mainActionType =
       payload: {
         item: string;
       };
+    }
+  | {
+      type: "CLEAR_ITEMS";
+      payload: {};
     };
 const MainContext = createContext<{
   state: mainStateType;
@@ -95,6 +99,10 @@ function MainReducer(state: mainStateType, action: mainActionType) {
         "availableItems",
         JSON.stringify(Array.from(newState.availableItems))
       );
+      return newState;
+    case "CLEAR_ITEMS":
+      newState.availableItems = new Set();
+      localStorage.removeItem("availableItems");
       return newState;
     default:
       return newState;
