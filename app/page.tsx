@@ -114,6 +114,7 @@ function AddItemsInputBox() {
       <button
         className="btn-outline btn-primary btn flex gap-2"
         disabled={!validateItem()}
+        onClick={addItem}
       >
         <PlusCircleIcon className="h-5 w-5" />
         <span>Add</span>
