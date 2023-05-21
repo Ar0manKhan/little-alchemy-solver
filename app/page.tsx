@@ -410,24 +410,44 @@ function Footer() {
             visual appeal of this app
           </li>
           <li>
-            <a
+            <Link
               className="text-blue-500 underline hover:text-blue-700"
               href="https://heroicons.com/"
             >
               Heroicons
-            </a>
+            </Link>
             - for their extensive collection of high-quality icons that enrich
             the user interface of this app
           </li>
           <li>
-            <a
+            <Link
               className="text-blue-500 underline hover:text-blue-700"
               href="https://iconpacks.net/"
             >
               IconPacks
-            </a>
+            </Link>
             - for providing additional icons that complement the visual
             aesthetics of this app
+          </li>
+          <li>
+            <Link
+              href="https://vercel.com/"
+              className="text-blue-500 underline hover:text-blue-700"
+            >
+              Vercel
+            </Link>{" "}
+            - for providing a robust hosting platform that ensures the smooth
+            deployment and reliable performance of this app
+          </li>
+          <li>
+            <Link
+              href="https://cheerio.js.org/"
+              className="text-blue-500 underline hover:text-blue-700"
+            >
+              Cheerio.js
+            </Link>{" "}
+            - for offering a powerful and flexible library that enables parsing
+            of IGN page
           </li>
         </ul>
         <p className="text-sm text-gray-600">
