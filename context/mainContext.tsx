@@ -9,6 +9,7 @@ import {
 type mainStateType = {
   availableItems: Set<string>;
   allItems: string[];
+  filterByItems?: Set<string>;
 };
 const initialState: mainStateType = {
   availableItems: new Set(),
@@ -29,8 +30,14 @@ type mainActionType =
       };
     }
   | {
-      type: "CLEAR_ITEMS";
+      type: "CLEAR_ITEMS" | "CLEAR_FILTERS";
       payload: {};
+    }
+  | {
+      type: "TOGGLE_FILTER";
+      payload: {
+        item: string;
+      };
     };
 const MainContext = createContext<{
   state: mainStateType;
@@ -103,6 +110,19 @@ function MainReducer(state: mainStateType, action: mainActionType) {
     case "CLEAR_ITEMS":
       newState.availableItems = new Set();
       localStorage.removeItem("availableItems");
+      return newState;
+    case "TOGGLE_FILTER":
+      newState.filterByItems = newState.filterByItems
+        ? new Set(newState.filterByItems)
+        : new Set();
+      if (newState.filterByItems.has(payload.item)) {
+        newState.filterByItems.delete(payload.item);
+      } else {
+        newState.filterByItems.add(payload.item);
+      }
+      return newState;
+    case "CLEAR_FILTERS":
+      newState.filterByItems = undefined;
       return newState;
     default:
       return newState;
